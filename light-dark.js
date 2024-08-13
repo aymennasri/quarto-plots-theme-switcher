@@ -54,12 +54,15 @@ function updateImageSrc() {
     }
   });
 
-  // Log updated SVG text elements
-  const svgTexts = document.querySelectorAll('svg text, svg tspan');
-  console.log(`Updated ${svgTexts.length} SVG text elements`);
-  if (svgTexts.length > 0) {
-    console.log(`Sample text style: ${svgTexts[0].getAttribute('style')}`);
-  }
+// Update table text color
+  updateElements('.gt_table_body, .gt_heading, .gt_sourcenotes, .gt_footnotes', table => {
+    if (isDarkMode) {
+      table.style.color = 'white'; // Set text color to a light shade
+    } else {
+      table.style.color = ''; // Reset to default
+    }
+  });
+
 }
 
 const observer = new MutationObserver(mutations => {
