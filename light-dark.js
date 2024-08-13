@@ -8,8 +8,6 @@ function updateImageSrc() {
   const isLightMode = document.body.classList.contains('quarto-light');
   const isDarkMode = document.body.classList.contains('quarto-dark');
   
-  if (!isLightMode && !isDarkMode) return; // Exit if neither mode is active
-
   const updateElements = (selector, updateFunc) => {
     document.querySelectorAll(selector).forEach(updateFunc);
   };
