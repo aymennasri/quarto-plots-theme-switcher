@@ -5,32 +5,35 @@
 // License: MIT
 
 function updateImageSrc() {
+  // Identifying which theme is on
   const isLightMode = document.body.classList.contains('quarto-light');
   const isDarkMode = document.body.classList.contains('quarto-dark');
   
   if (!isLightMode && !isDarkMode) return; // Exit if neither mode is active
 
+  // Function to update styles
   const updateElements = (selector, updateFunc) => {
     document.querySelectorAll(selector).forEach(updateFunc);
   };
 
-  // Update image sources
+  // Function to replace the plots depending on theme
   updateElements('img', img => {
     const newSrc = img.src.replace(isLightMode ? '.dark' : '.light', isDarkMode ? '.dark' : '.light');
     if (newSrc !== img.src) img.src = newSrc;
   });
 
-  // Update SVG background and legend fill
+  // Update ggplot
   const updateStyle = (elem, prop, lightValue, darkValue) => {
     const currentValue = elem.style[prop];
     const newValue = isDarkMode ? darkValue : lightValue;
     if (currentValue !== newValue) elem.style[prop] = newValue;
   };
 
+  // Update ploly background color for both the plot and the legend box
   updateElements('svg[style*="background"]', svg => updateStyle(svg, 'background', 'rgb(255, 241, 229)', 'rgb(34, 34, 34)'));
   updateElements('rect[style*="fill"]', rect => updateStyle(rect, 'fill', 'rgb(255, 241, 229)', 'rgb(34, 34, 34)'));
 
-  // Update text styles
+  // Save the original plotly styling
   updateElements('text[class*="legendtext"], svg text, svg tspan', text => {
     if (!text.dataset.originalStyle) {
       const computedStyle = window.getComputedStyle(text);
@@ -46,6 +49,7 @@ function updateImageSrc() {
 
     const originalStyle = JSON.parse(text.dataset.originalStyle);
 
+    // Modify the text colors for plotly labels
     if (isDarkMode) {
       text.style.fill = 'white';
       text.style.color = 'white';
@@ -54,7 +58,7 @@ function updateImageSrc() {
     }
   });
 
-// Update table text color
+  // Update table text color
   updateElements('.gt_table_body, .gt_heading, .gt_sourcenotes, .gt_footnotes', table => {
     if (isDarkMode) {
       table.style.color = 'white'; // Set text color to a light shade
@@ -65,6 +69,7 @@ function updateImageSrc() {
 
 }
 
+// Observer making sure all changes are done
 const observer = new MutationObserver(mutations => {
   if (mutations.some(mutation => 
       (mutation.type === 'attributes' && mutation.attributeName === 'class') ||
